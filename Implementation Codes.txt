@@ -1,0 +1,60 @@
+#File contains implemetation codes in python language for Denclue, Fuzzy-C and BIRCH
+ and should be implemented in that order. 
+
+Implementing Denclue in Python
+#import hdbscan, sklearn packages
+import hdbscan
+from sklearn.datasets import make_blobs
+data, _ = make_blobs(1000)
+clusterer = hdbscan.RobustSingleLinkage(cut=0.125, k=7)
+cluster_labels = clusterer.fit_predict(data)
+hierarchy = clusterer.cluster_hierarchy_
+alt_labels = hierarchy.get_clusters(0.100, 5)
+hierarchy.plot()
+
+Implementing Fuzzy-C in Python
+# import fcmeans, matplotlib, seaborn and sklearn packages.
+#souce code by (Dias 2019)
+from fcmeans import FCM
+from sklearn.datasets import make_blobs
+from matplotlib import pyplot as plt
+from seaborn import scatterplot as scatter
+
+# create artificial dataset
+n_samples = 50000
+n_bins = 3  # use 3 bins for calibration_curve as we have 3 clusters here
+centers = [(-5, -5), (0, 0), (5, 5)]
+X,_ = make_blobs(n_samples=n_samples, n_features=2, cluster_std=1.0,
+                  centers=centers, shuffle=False, random_state=42)
+# fit the fuzzy-c-means
+fcm = FCM(n_clusters=3)
+fcm.fit(X)
+# outputs
+fcm_centers = fcm.centers
+fcm_labels  = fcm.u.argmax(axis=1)
+# plot result
+f, axes = plt.subplots(1, 2, figsize=(11,5))
+scatter(X[:,0], X[:,1], ax=axes[0])
+scatter(X[:,0], X[:,1], ax=axes[1], hue=fcm_labels)
+scatter(fcm_centers[:,0], fcm_centers[:,1], ax=axes[1],marker="s",s=200)
+plt.show()
+
+Implementing BIRCH in Python
+
+# import numpy, matplotlib, seaborn and sklearn packages.	
+import numpy as np
+from matplotlib import pyplot as plt
+import seaborn as sns
+sns.set()
+from sklearn.datasets.samples_generator import make_blobs
+from sklearn.cluster import Birch
+# generate data from sklearn with clusters.
+X, clusters = make_blobs(n_samples=450, centers=6, cluster_std=0.70, random_state=0)
+plt.scatter(X[:,0], X[:,1], alpha=0.7, edgecolors='b')
+# sets the branching factor, number of clusters and threshold.
+brc = Birch(branching_factor=50, n_clusters=None, threshold=1.5)brc.fit(X)
+# get a list of data points and their clusters.
+labels = brc.predict(X)
+# plot the data points showing color discrimination for each cluster.
+plt.scatter(X[:,0], X[:,1], c=labels, cmap='rainbow', alpha=0.7, edgecolors='b')
+
